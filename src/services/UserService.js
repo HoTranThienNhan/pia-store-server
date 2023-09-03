@@ -56,7 +56,7 @@ const signinUser = (userSignin) => {
             if (checkExistedUser == null) {
                 resolve({
                     status: 'OK',
-                    message: 'Email does not exist'
+                    message: 'User does not exist'
                 })
             }
 
@@ -92,4 +92,53 @@ const signinUser = (userSignin) => {
     })
 }
 
-module.exports = { createUser, signinUser }
+const updateUser = (userId, data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            // Check if user existed by email
+            const checkExistedUser = await User.findOne({
+                _id: userId
+            })
+            
+            if (checkExistedUser == null) {
+                resolve({
+                    status: 'OK',
+                    message: 'User does not exist'
+                })
+            }
+
+            const updatedUser = await User.findByIdAndUpdate(userId, data, { new: true })
+            console.log(updatedUser)
+
+            // // compare password and password in database
+            // const comparePassword = bcrypt.compareSync(password, checkExistedUser.password)
+            // if (!comparePassword) {
+            //     resolve({
+            //         status: 'OK',
+            //         message: 'Username or password is incorrect'
+            //     })
+            // }
+
+            // const accessToken = await generalAccessToken({
+            //     id: checkExistedUser.id,
+            //     isAdmin: checkExistedUser.isAdmin
+            // })
+
+            // const refreshToken = await generalRefreshToken({
+            //     id: checkExistedUser.id,
+            //     isAdmin: checkExistedUser.isAdmin
+            // })
+
+            resolve({
+                status: 'OK',
+                message: 'SUCCESS',
+                data: updatedUser
+            })
+
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+module.exports = { createUser, signinUser, updateUser }

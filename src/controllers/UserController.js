@@ -41,7 +41,6 @@ const createUser = async (req, res) => {
 }
 
 // check valid fields before sign in
-
 const signinUser = async (req, res) => {
     try {
         const { name, email, password, confirmPassword, phone } = req.body 
@@ -81,4 +80,28 @@ const signinUser = async (req, res) => {
     }
 }
 
-module.exports = { createUser, signinUser }
+// 
+const updateUser = async (req, res) => {
+    try {
+        const userId = req.params.id
+        const data = req.body
+
+        if (!userId) {
+            return res.status(200).json({
+                status: 'ERROR',
+                message: 'User ID is required'
+            })
+        }
+        
+        const response = await UserService.updateUser(userId, data)
+        return res.status(200).json(response)
+
+    } catch (e) {
+        console.log(e)
+        return res.status(404).json({
+            message: e
+        })
+    }
+}
+
+module.exports = { createUser, signinUser, updateUser }
