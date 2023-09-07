@@ -7,7 +7,7 @@ const createUser = (newUser) => {
         const { name, email, password, phone } = newUser
 
         try {
-            // Check if user existed by email
+            // Check if user exists by email
             const checkExistedUser = await User.findOne({
                 email: email
             })
@@ -61,7 +61,9 @@ const signinUser = (userSignin) => {
             }
 
             // compare password and password in database
-            const comparePassword = bcrypt.compareSync(password, checkExistedUser.password)
+            const comparePassword = bcrypt.compareSync(password, checkExistedUser.password);
+            console.log(password, ' - ', checkExistedUser.password);
+
             if (!comparePassword) {
                 resolve({
                     status: 'OK',
@@ -96,7 +98,7 @@ const signinUser = (userSignin) => {
 const updateUser = (userId, data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            // Check if user existed by email
+            // Check if user exists by email
             const checkExistedUser = await User.findOne({
                 _id: userId
             })
@@ -133,7 +135,7 @@ const updateUser = (userId, data) => {
 const deleteUser = (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            // Check if user existed by email
+            // Check if user exists by email
             const checkExistedUser = await User.findOne({
                 _id: userId
             })
@@ -178,4 +180,39 @@ const getAllUsers = () => {
     })
 }
 
-module.exports = { createUser, signinUser, updateUser, deleteUser, getAllUsers }
+const getUserDetails = (userId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+
+            // check if user exists
+            const checkExistedUser = await User.findOne({
+                _id: userId
+            })
+            
+            if (checkExistedUser == null) {
+                resolve({
+                    status: 'OK',
+                    message: 'User does not exist'
+                })
+            }
+
+            resolve({
+                status: 'OK',
+                message: 'GET USER SUCCESS',
+                data: checkExistedUser
+            })
+
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+module.exports = { 
+    createUser, 
+    signinUser, 
+    updateUser, 
+    deleteUser, 
+    getAllUsers, 
+    getUserDetails
+}

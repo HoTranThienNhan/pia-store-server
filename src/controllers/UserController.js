@@ -1,4 +1,5 @@
-const UserService = require('../services/UserService')
+const UserService = require('../services/UserService');
+const JwtService = require('../services/JwtService');
 
 // check valid fields before create new user account
 const createUser = async (req, res) => {
@@ -104,7 +105,7 @@ const updateUser = async (req, res) => {
 // check id user exists in database before delete
 const deleteUser = async (req, res) => {
     try {
-        const userId = req.params.id
+        const userId = req.params.id;
 
         if (!userId) {
             return res.status(200).json({
@@ -134,6 +135,55 @@ const getAllUsers = async (req, res) => {
     }
 }
 
+const getUserDetails = async (req, res) => {
+    try {
+
+        const userId = req.params.id;
+
+        if (!userId) {
+            return res.status(200).json({
+                status: 'ERROR',
+                message: 'User ID is required'
+            })
+        }
+
+        const response = await UserService.getUserDetails(userId)
+        return res.status(200).json(response)
+    } catch (e) {
+        return res.status(404).json({
+            message: e
+        })
+    }
+}
+
+const refreshToken = async (req, res) => {
+    try {
+
+        const token = req.headers.token.split(' ')[1];
+
+        if (!token) {
+            return res.status(200).json({
+                status: 'ERROR',
+                message: 'Token is required'
+            })
+        }
+
+        const response = await JwtService.refreshTokenJwtService(token);
+        return res.status(200).json(response);
+    } catch (e) {
+        return res.status(404).json({
+            message: e
+        })
+    }
+}
 
 
-module.exports = { createUser, signinUser, updateUser, deleteUser, getAllUsers }
+module.exports = { 
+    createUser, 
+    signinUser, 
+    updateUser, 
+    deleteUser, 
+    getAllUsers, 
+    getUserDetails,
+    refreshToken 
+}
