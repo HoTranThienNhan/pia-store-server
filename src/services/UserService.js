@@ -33,7 +33,7 @@ const createUser = (newUser) => {
             if (createdUser) {
                 resolve({
                     status: 'OK',
-                    message: 'SUCCESS',
+                    message: 'CREATE NEW USER SUCCESS',
                     data: createdUser
                 })
             }
@@ -69,6 +69,7 @@ const signinUser = (userSignin) => {
                 })
             }
 
+            // access and refresh token contains id and isAdmin fields
             const accessToken = await generalAccessToken({
                 id: checkExistedUser.id,
                 isAdmin: checkExistedUser.isAdmin
@@ -81,7 +82,7 @@ const signinUser = (userSignin) => {
 
             resolve({
                 status: 'OK',
-                message: 'SUCCESS',
+                message: 'SIGN IN SUCCESS',
                 accessToken,
                 refreshToken
             })
@@ -107,31 +108,19 @@ const updateUser = (userId, data) => {
                 })
             }
 
-            const updatedUser = await User.findByIdAndUpdate(userId, data, { new: true })
-            console.log(updatedUser)
+            // if update password, hash password with salt (cost = 10)
+            if (data.password != null) {
+                const pwd = data.password;
+                const costHash = 10;
+                data.password = bcrypt.hashSync(pwd, costHash);
+            }
 
-            // // compare password and password in database
-            // const comparePassword = bcrypt.compareSync(password, checkExistedUser.password)
-            // if (!comparePassword) {
-            //     resolve({
-            //         status: 'OK',
-            //         message: 'Username or password is incorrect'
-            //     })
-            // }
-
-            // const accessToken = await generalAccessToken({
-            //     id: checkExistedUser.id,
-            //     isAdmin: checkExistedUser.isAdmin
-            // })
-
-            // const refreshToken = await generalRefreshToken({
-            //     id: checkExistedUser.id,
-            //     isAdmin: checkExistedUser.isAdmin
-            // })
+            // if user exists, update new data for user by id
+            const updatedUser = await User.findByIdAndUpdate(userId, data, { new: true });
 
             resolve({
                 status: 'OK',
-                message: 'SUCCESS',
+                message: 'UPDATE USER SUCCESS',
                 data: updatedUser
             })
 
@@ -141,4 +130,52 @@ const updateUser = (userId, data) => {
     })
 }
 
-module.exports = { createUser, signinUser, updateUser }
+const deleteUser = (userId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            // Check if user existed by email
+            const checkExistedUser = await User.findOne({
+                _id: userId
+            })
+            
+            if (checkExistedUser == null) {
+                resolve({
+                    status: 'OK',
+                    message: 'User does not exist'
+                })
+            }
+
+            // if user exists then delete user by id
+            await User.findByIdAndDelete(userId)
+
+            resolve({
+                status: 'OK',
+                message: 'DELETE USER SUCCESS'
+            })
+
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+const getAllUsers = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+
+            // get all users
+            const allUsers = await User.find();
+
+            resolve({
+                status: 'OK',
+                message: 'GET ALL USERS SUCCESS',
+                data: allUsers
+            })
+
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+module.exports = { createUser, signinUser, updateUser, deleteUser, getAllUsers }

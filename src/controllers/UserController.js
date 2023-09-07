@@ -33,7 +33,6 @@ const createUser = async (req, res) => {
         return res.status(200).json(response)
 
     } catch (e) {
-        console.log(e)
         return res.status(404).json({
             message: e
         })
@@ -73,14 +72,13 @@ const signinUser = async (req, res) => {
         return res.status(200).json(response)
 
     } catch (e) {
-        console.log(e)
         return res.status(404).json({
             message: e
         })
     }
 }
 
-// 
+// check id user exists in database before update
 const updateUser = async (req, res) => {
     try {
         const userId = req.params.id
@@ -97,11 +95,45 @@ const updateUser = async (req, res) => {
         return res.status(200).json(response)
 
     } catch (e) {
-        console.log(e)
         return res.status(404).json({
             message: e
         })
     }
 }
 
-module.exports = { createUser, signinUser, updateUser }
+// check id user exists in database before delete
+const deleteUser = async (req, res) => {
+    try {
+        const userId = req.params.id
+
+        if (!userId) {
+            return res.status(200).json({
+                status: 'ERROR',
+                message: 'User ID is required'
+            })
+        }
+        
+        const response = await UserService.deleteUser(userId)
+        return res.status(200).json(response)
+
+    } catch (e) {
+        return res.status(404).json({
+            message: e
+        })
+    }
+}
+
+const getAllUsers = async (req, res) => {
+    try {
+        const response = await UserService.getAllUsers()
+        return res.status(200).json(response)
+    } catch (e) {
+        return res.status(404).json({
+            message: e
+        })
+    }
+}
+
+
+
+module.exports = { createUser, signinUser, updateUser, deleteUser, getAllUsers }
