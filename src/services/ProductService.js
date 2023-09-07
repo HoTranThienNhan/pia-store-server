@@ -128,17 +128,24 @@ const getProductDetails = (productId) => {
     });
 }
 
-const getAllProducts = () => {
+const getAllProducts = (limitProducts = 8, page = 0) => {
     return new Promise(async (resolve, reject) => {
         try {
 
-            // get all products
-            const allProducts = await Product.find();
+            const totalProduct = await Product.count();
+
+            // get all products, with page n showing limit m products
+            // limit(n) => show n products
+            // skip(n) => skip first n products and show remaining products
+            const allProducts = await Product.find().limit(limitProducts).skip(page * limitProducts);
 
             resolve({
                 status: 'OK',
                 message: 'GET ALL PRODUCTS SUCCESS',
-                data: allProducts
+                data: allProducts,
+                total: totalProduct,
+                currentPage: parseInt(page) + 1,
+                totalPage: Math.ceil(totalProduct/limitProducts)
             });
 
         } catch (e) {

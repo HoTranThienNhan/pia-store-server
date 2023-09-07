@@ -90,7 +90,9 @@ const getProductDetails = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
     try {
-        const response = await ProductService.getAllProducts();
+        // get limitProducts and page from query url
+        const { limitProducts, page } = req.query;
+        const response = await ProductService.getAllProducts(limitProducts, page);
         return res.status(200).json(response);
     } catch (e) {
         return res.status(404).json({
