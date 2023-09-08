@@ -20,12 +20,12 @@ const createProduct = (newProduct) => {
             // create new user
             const createdProduct = await Product.create({
                 id,
-                name, 
-                image, 
-                type, 
-                price, 
-                countInStock, 
-                rating, 
+                name,
+                image,
+                type,
+                price,
+                countInStock,
+                rating,
                 description
             });
             if (createdProduct) {
@@ -48,7 +48,7 @@ const deleteProduct = (productId) => {
             const checkExistedProduct = await Product.findOne({
                 _id: productId
             });
-            
+
             if (checkExistedProduct == null) {
                 resolve({
                     status: 'OK',
@@ -77,7 +77,7 @@ const updateProduct = (productId, data) => {
             const checkExistedProduct = await Product.findOne({
                 _id: productId
             });
-            
+
             if (checkExistedProduct == null) {
                 resolve({
                     status: 'OK',
@@ -108,7 +108,7 @@ const getProductDetails = (productId) => {
             const checkExistedProduct = await Product.findOne({
                 _id: productId
             });
-            
+
             if (checkExistedProduct == null) {
                 resolve({
                     status: 'OK',
@@ -128,11 +128,51 @@ const getProductDetails = (productId) => {
     });
 }
 
-const getAllProducts = (limitProducts = 8, page = 0) => {
+const getAllProducts = (limitProducts, page, sort, filter) => {
     return new Promise(async (resolve, reject) => {
         try {
 
             const totalProduct = await Product.count();
+
+            // if filter products by key and value
+            if (filter) {
+                const key = filter[0];
+                const value = filter[1];
+
+                // find products by key and value, $regex means filter with relative value
+                const allFilteredProducts = await Product.find({
+                    [key]: { '$regex': value }
+                }).limit(limitProducts).skip(page * limitProducts);
+
+                resolve({
+                    status: 'OK',
+                    message: 'GET ALL PRODUCTS SUCCESS',
+                    data: allFilteredProducts,
+                    total: totalProduct,
+                    currentPage: parseInt(page) + 1,
+                    totalPage: Math.ceil(totalProduct / limitProducts)
+                });
+            }
+
+            // if sort products
+            if (sort) {
+                const key = sort[0];
+                const value = sort[1];
+                // create an object contains sort key and value 
+                const objectSort = {};
+                objectSort[key] = value;
+
+                const allSortedProducts = await Product.find().limit(limitProducts).skip(page * limitProducts).sort(objectSort);
+
+                resolve({
+                    status: 'OK',
+                    message: 'GET ALL PRODUCTS SUCCESS',
+                    data: allSortedProducts,
+                    total: totalProduct,
+                    currentPage: parseInt(page) + 1,
+                    totalPage: Math.ceil(totalProduct / limitProducts)
+                });
+            }
 
             // get all products, with page n showing limit m products
             // limit(n) => show n products
@@ -145,7 +185,7 @@ const getAllProducts = (limitProducts = 8, page = 0) => {
                 data: allProducts,
                 total: totalProduct,
                 currentPage: parseInt(page) + 1,
-                totalPage: Math.ceil(totalProduct/limitProducts)
+                totalPage: Math.ceil(totalProduct / limitProducts)
             });
 
         } catch (e) {
@@ -154,10 +194,10 @@ const getAllProducts = (limitProducts = 8, page = 0) => {
     });
 }
 
-module.exports = { 
-    createProduct, 
-    deleteProduct, 
-    updateProduct, 
-    getProductDetails, 
-    getAllProducts 
+module.exports = {
+    createProduct,
+    deleteProduct,
+    updateProduct,
+    getProductDetails,
+    getAllProducts
 }
