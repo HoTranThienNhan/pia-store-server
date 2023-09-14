@@ -9,23 +9,23 @@ const createUser = async (req, res) => {
         const isValidEmail = emailReg.test(email);
 
         // Check required fields
-        if (!name || !email || !password || !confirmPassword || !phone) {
+        if (!email || !password || !confirmPassword) {
             return res.status(200).json({
-                status: 'ERROR',
+                status: 'ERR',
                 message: 'The input is required'
             });
         } 
         // Check valid email
         else if (!isValidEmail) {
             return res.status(200).json({
-                status: 'ERROR',
+                status: 'ERR',
                 message: 'Incorrect email'
             });
         } 
         // Check if password matching confirm password
         else if (password !== confirmPassword) {
             return res.status(200).json({
-                status: 'ERROR',
+                status: 'ERR',
                 message: 'Password and confirm password does not match'
             });
         };
@@ -43,31 +43,24 @@ const createUser = async (req, res) => {
 // check valid fields before sign in
 const signinUser = async (req, res) => {
     try {
-        const { name, email, password, confirmPassword, phone } = req.body;
+        const { email, password } = req.body;
         const emailReg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
         const isValidEmail = emailReg.test(email);
 
         // Check required fields
-        if (!name || !email || !password || !confirmPassword || !phone) {
+        if (!email || !password) {
             return res.status(200).json({
-                status: 'ERROR',
+                status: 'ERR',
                 message: 'The input is required'
             });
         } 
         // Check valid email
         else if (!isValidEmail) {
             return res.status(200).json({
-                status: 'ERROR',
+                status: 'ERR',
                 message: 'Incorrect email'
             });
         } 
-        // Check if password matching confirm password
-        else if (password !== confirmPassword) {
-            return res.status(200).json({
-                status: 'ERROR',
-                message: 'Password and confirm password does not match'
-            });
-        };
 
         const response = await UserService.signinUser(req.body);
         return res.status(200).json(response);

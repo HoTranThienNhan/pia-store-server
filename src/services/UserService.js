@@ -14,7 +14,7 @@ const createUser = (newUser) => {
 
             if (checkExistedUser != null) {
                 resolve({
-                    status: 'OK',
+                    status: 'ERR',
                     message: 'Email already exists'
                 });
             }
@@ -45,7 +45,7 @@ const createUser = (newUser) => {
 
 const signinUser = (userSignin) => {
     return new Promise(async (resolve, reject) => {
-        const { name, email, password, phone } = userSignin;
+        const { email, password } = userSignin;
 
         try {
             // Check if user existed by email
@@ -55,7 +55,7 @@ const signinUser = (userSignin) => {
 
             if (checkExistedUser == null) {
                 resolve({
-                    status: 'OK',
+                    status: 'ERR',
                     message: 'User does not exist'
                 });
             }
@@ -65,7 +65,7 @@ const signinUser = (userSignin) => {
 
             if (!comparePassword) {
                 resolve({
-                    status: 'OK',
+                    status: 'ERR',
                     message: 'Username or password is incorrect'
                 });
             }
