@@ -4,15 +4,29 @@ const JwtService = require('../services/JwtService');
 // check valid fields before create new user account
 const createUser = async (req, res) => {
     try {
-        const { name, email, password, confirmPassword, phone } = req.body;
+        const { fullname, email, password, confirmPassword, phone } = req.body;
+
+        const fullnameReg = /^[a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\ ]+$/;
+        const isValidFullname = fullnameReg.test(fullname);
+
         const emailReg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
         const isValidEmail = emailReg.test(email);
 
+        const phoneReg = /^(0)+([0-9]{9,10})$/;
+        const isValidPhone = phoneReg.test(phone);
+
         // Check required fields
-        if (!email || !password || !confirmPassword) {
+        if (!fullname || !email || !password || !confirmPassword || !phone) {
             return res.status(200).json({
                 status: 'ERR',
                 message: 'The input is required'
+            });
+        } 
+        // Check valid fullname
+        else if (!isValidFullname) {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'Incorrect full name'
             });
         } 
         // Check valid email
@@ -20,6 +34,13 @@ const createUser = async (req, res) => {
             return res.status(200).json({
                 status: 'ERR',
                 message: 'Incorrect email'
+            });
+        } 
+        // Check valid phone
+        else if (!isValidPhone) {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'Incorrect phone number'
             });
         } 
         // Check if password matching confirm password
