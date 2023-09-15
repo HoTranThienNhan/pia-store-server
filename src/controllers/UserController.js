@@ -83,9 +83,17 @@ const signinUser = async (req, res) => {
             });
         } 
 
+        // newResponse contains only access token
         const response = await UserService.signinUser(req.body);
-        return res.status(200).json(response);
+        const { refreshToken, ...newResponse } = response;
+        // set cookie name as refreshToken to refreshToken value
+        res.cookie('refreshToken', refreshToken, {
+            HttpOnly: true, // cookie is only used by HTTP request (server), prevent accessing from non-HTTP like JavaScript (browser)
+            Secure: false,
+            samesite: 'strict'
+        });
 
+        return res.status(200).json(newResponse);
     } catch (e) {
         return res.status(404).json({
             message: e
@@ -101,7 +109,7 @@ const updateUser = async (req, res) => {
 
         if (!userId) {
             return res.status(200).json({
-                status: 'ERROR',
+                status: 'ERR',
                 message: 'User ID is required'
             });
         }
@@ -123,7 +131,7 @@ const deleteUser = async (req, res) => {
 
         if (!userId) {
             return res.status(200).json({
-                status: 'ERROR',
+                status: 'ERR',
                 message: 'User ID is required'
             });
         }
@@ -158,7 +166,7 @@ const getUserDetails = async (req, res) => {
 
         if (!userId) {
             return res.status(200).json({
-                status: 'ERROR',
+                status: 'ERR',
                 message: 'User ID is required'
             });
         }
@@ -175,11 +183,12 @@ const getUserDetails = async (req, res) => {
 // create refresh token
 const refreshToken = async (req, res) => {
     try {
-        const token = req.headers.token.split(' ')[1];
+        // get refresh token from cookie
+        const token = req.cookies.refreshToken;
 
         if (!token) {
             return res.status(200).json({
-                status: 'ERROR',
+                status: 'ERR',
                 message: 'Token is required'
             });
         }

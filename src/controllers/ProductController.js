@@ -7,7 +7,7 @@ const createProduct = async (req, res) => {
         // Check required fields
         if (!id || !name || !image || !type || !price || !countInStock || !rating || !description) {
             return res.status(200).json({
-                status: 'ERROR',
+                status: 'ERR',
                 message: 'The input is required'
             });
         } 
@@ -29,7 +29,7 @@ const deleteProduct = async (req, res) => {
 
         if (!productId) {
             return res.status(200).json({
-                status: 'ERROR',
+                status: 'ERR',
                 message: 'User ID is required'
             });
         }
@@ -52,7 +52,7 @@ const updateProduct = async (req, res) => {
         // Check if product id exists
         if (!productId) {
             return res.status(200).json({
-                status: 'ERROR',
+                status: 'ERR',
                 message: 'Product ID is required'
             });
         } 
@@ -74,7 +74,7 @@ const getProductDetails = async (req, res) => {
 
         if (!productId) {
             return res.status(200).json({
-                status: 'ERROR',
+                status: 'ERR',
                 message: 'Product ID is required'
             });
         }

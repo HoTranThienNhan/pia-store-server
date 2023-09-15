@@ -3,6 +3,7 @@ const dotenv = require('dotenv')
 dotenv.config()
 
 const authAdminMiddleware = (req, res, next) => {
+    console.log(req.headers)
 
     if (req.headers.token != null) {
 
@@ -12,17 +13,15 @@ const authAdminMiddleware = (req, res, next) => {
         jwt.verify(token, process.env.ACCESS_TOKEN, function (err, user) {
             if (err) {
                 return res.status(404).json({
-                    status: 'ERROR',
+                    status: 'ERR',
                     message: 'Authentication failed'
                 })
             }
 
-            const { payload } = user;
-
             // if user is not admin, notify error
-            if (payload.isAdmin == false) {
+            if (user?.isAdmin == false) {
                 return res.status(404).json({
-                    status: 'ERROR',
+                    status: 'ERR',
                     message: 'Authentication failed'
                 })
             }
@@ -34,7 +33,7 @@ const authAdminMiddleware = (req, res, next) => {
 
     } else {
         return res.status(404).json({
-            status: 'ERROR',
+            status: 'ERR',
             message: 'Authentication failed'
         })
     }
@@ -53,17 +52,15 @@ const authUserMiddleware = (req, res, next) => {
         jwt.verify(token, process.env.ACCESS_TOKEN, function (err, user) {
             if (err) {
                 return res.status(404).json({
-                    status: 'ERROR',
+                    status: 'ERR',
                     message: 'Authentication failed'
                 })
             }
 
-            const { payload } = user;
-
             // if user is not admin, notify error
-            if (payload.isAdmin == false && payload.id != userId) {
+            if (user?.isAdmin == false && user?.id != userId) {
                 return res.status(404).json({
-                    status: 'ERROR',
+                    status: 'ERR',
                     message: 'Authentication failed!'
                 })
             }
@@ -75,7 +72,7 @@ const authUserMiddleware = (req, res, next) => {
 
     } else {
         return res.status(404).json({
-            status: 'ERROR',
+            status: 'ERR',
             message: 'Authentication failed'
         })
     }
