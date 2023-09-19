@@ -101,6 +101,21 @@ const signinUser = async (req, res) => {
     }
 }
 
+// clear cookie for refresh token
+const signoutUser = async (req, res) => {
+    try {
+        res.clearCookie('refreshToken');
+        return res.status(200).json({
+            status: 'OK',
+            message: 'Sign out successfully'
+        });
+    } catch (e) {
+        return res.status(404).json({
+            message: e
+        });
+    }
+}
+
 // check id user exists in database before update
 const updateUser = async (req, res) => {
     try {
@@ -206,6 +221,7 @@ const refreshToken = async (req, res) => {
 module.exports = { 
     createUser, 
     signinUser, 
+    signoutUser,
     updateUser, 
     deleteUser, 
     getAllUsers, 
