@@ -3,7 +3,6 @@ const dotenv = require('dotenv')
 dotenv.config()
 
 const authAdminMiddleware = (req, res, next) => {
-    console.log(req.headers)
 
     if (req.headers.token != null) {
 

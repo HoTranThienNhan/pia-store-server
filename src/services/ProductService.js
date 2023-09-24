@@ -12,7 +12,7 @@ const createProduct = (newProduct) => {
 
             if (checkExistedProduct != null) {
                 resolve({
-                    status: 'OK',
+                    status: 'ERR',
                     message: 'Product already exists'
                 });
             }
