@@ -51,7 +51,7 @@ const deleteProduct = (productId) => {
 
             if (checkExistedProduct == null) {
                 resolve({
-                    status: 'OK',
+                    status: 'ERR',
                     message: 'Product does not exist'
                 });
             }
@@ -80,7 +80,7 @@ const updateProduct = (productId, data) => {
 
             if (checkExistedProduct == null) {
                 resolve({
-                    status: 'OK',
+                    status: 'ERR',
                     message: 'Product does not exist'
                 });
             }
@@ -111,7 +111,7 @@ const getProductDetails = (productId) => {
 
             if (checkExistedProduct == null) {
                 resolve({
-                    status: 'OK',
+                    status: 'ERR',
                     message: 'Product does not exist'
                 });
             }
