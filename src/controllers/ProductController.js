@@ -2,7 +2,7 @@ const ProductService = require('../services/ProductService');
 
 const createProduct = async (req, res) => {
     try {
-        const { id, name, image, type, price, countInStock, rating, description } = req.body;
+        var { id, name, image, type, price, countInStock, rating, description, active } = req.body;
 
         // Check required fields
         if (!id || !name || !image || !type || !price || !countInStock || !description) {

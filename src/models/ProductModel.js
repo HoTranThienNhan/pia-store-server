@@ -9,7 +9,8 @@ const productSchema = new mongoose.Schema(
         price: { type: Number, required: true },
         countInStock: { type: Number, required: true },
         rating: { type: Number, required: false },
-        description: { type: String, required: true }
+        description: { type: String, required: true },
+        active: {type: Boolean, required: false }
     },
     {
         timestamps: true

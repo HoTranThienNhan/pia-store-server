@@ -2,7 +2,7 @@ const Product = require('../models/ProductModel');
 
 const createProduct = (newProduct) => {
     return new Promise(async (resolve, reject) => {
-        const { id, name, image, type, price, countInStock, rating, description } = newProduct;
+        const { id, name, image, type, price, countInStock, rating, description, active } = newProduct;
 
         try {
             // Check if product exists by _id
@@ -26,7 +26,8 @@ const createProduct = (newProduct) => {
                 price,
                 countInStock,
                 rating,
-                description
+                description, 
+                active
             });
             if (createdProduct) {
                 resolve({
