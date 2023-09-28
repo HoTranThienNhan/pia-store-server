@@ -4,7 +4,7 @@ const { generalAccessToken, generalRefreshToken } = require('./JwtService');
 
 const createUser = (newUser) => {
     return new Promise(async (resolve, reject) => {
-        const { fullname, email, password, phone } = newUser;
+        const { fullname, email, password, phone, avatar, address, active, isAdmin } = newUser;
 
         try {
             // Check if user exists by email
@@ -28,7 +28,11 @@ const createUser = (newUser) => {
                 fullname,
                 email,
                 password: hash,
-                phone
+                phone, 
+                avatar, 
+                address,
+                active,
+                isAdmin
             });
             if (createdUser) {
                 resolve({
@@ -67,6 +71,14 @@ const signinUser = (userSignin) => {
                 resolve({
                     status: 'ERR',
                     message: 'Username or password is incorrect'
+                });
+            }
+            
+            // check if account is active
+            if (checkExistedUser.active === false) {
+                resolve({
+                    status: 'ERR',
+                    message: 'User is inactive'
                 });
             }
 

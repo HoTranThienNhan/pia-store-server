@@ -4,7 +4,7 @@ const JwtService = require('../services/JwtService');
 // check valid fields before create new user account
 const createUser = async (req, res) => {
     try {
-        const { fullname, email, password, confirmPassword, phone } = req.body;
+        const { fullname, email, password, confirmPassword, phone, avatar, address, active, isAdmin } = req.body;
 
         const fullnameReg = /^[a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\ ]+$/;
         const isValidFullname = fullnameReg.test(fullname);

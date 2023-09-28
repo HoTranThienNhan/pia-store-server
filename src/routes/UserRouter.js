@@ -14,7 +14,7 @@ router.get('/getAllUsers', authAdminMiddleware, UserController.getAllUsers);
 router.get('/getUserDetails/:id', authUserMiddleware, UserController.getUserDetails);
 
 // product routes
-router.get('/getAllProducts', authAdminMiddleware, ProductController.getAllProducts);
+// router.get('/getAllProducts', authAdminMiddleware, ProductController.getAllProducts);
 
 // token routes
 router.post('/refreshToken', UserController.refreshToken);
