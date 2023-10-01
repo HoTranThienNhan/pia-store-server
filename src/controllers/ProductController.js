@@ -67,6 +67,28 @@ const updateProduct = async (req, res) => {
     }
 }
 
+const updateActiveMultipleProducts = async (req, res) => {
+    try {
+        const { productIds, isActive } = req.body;
+
+        // Check if multiple product ids exists
+        if (!productIds) {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'Multiple product IDs are required'
+            });
+        } 
+
+        const response = await ProductService.updateActiveMultipleProducts(productIds, isActive);
+        return res.status(200).json(response);
+
+    } catch (e) {
+        return res.status(404).json({
+            message: e
+        });
+    }
+}
+
 const getProductDetails = async (req, res) => {
     try {
 
@@ -106,6 +128,7 @@ module.exports = {
     createProduct, 
     deleteProduct, 
     updateProduct, 
+    updateActiveMultipleProducts,
     getProductDetails, 
     getAllProducts 
 }

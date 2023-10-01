@@ -143,6 +143,27 @@ const updateUser = (userId, data) => {
     });
 }
 
+const updateActiveMultipleUsers = (userEmails, isActive) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            // if user exists, update new data for user by email
+            const updatedMultipleUsers = await User.updateMany(
+                { email: userEmails },
+                { $set: { active: isActive } }
+            );
+
+            resolve({
+                status: 'OK',
+                message: 'UPDATE ACTIVE FOR MULTIPLE USERS SUCCESS',
+                data: updatedMultipleUsers
+            })
+
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
 const deleteUser = (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -223,6 +244,7 @@ module.exports = {
     createUser, 
     signinUser, 
     updateUser, 
+    updateActiveMultipleUsers,
     deleteUser, 
     getAllUsers, 
     getUserDetails

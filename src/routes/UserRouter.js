@@ -8,13 +8,11 @@ const { authAdminMiddleware, authUserMiddleware } = require("../middleware/authM
 router.post('/signup', UserController.createUser);
 router.post('/signin', UserController.signinUser);
 router.post('/signout', UserController.signoutUser);
-router.put('/updateUser/:id', authUserMiddleware, UserController.updateUser);
-router.delete('/deleteUser/:id', authAdminMiddleware, UserController.deleteUser);
-router.get('/getAllUsers', authAdminMiddleware, UserController.getAllUsers);
-router.get('/getUserDetails/:id', authUserMiddleware, UserController.getUserDetails);
-
-// product routes
-// router.get('/getAllProducts', authAdminMiddleware, ProductController.getAllProducts);
+router.put('/updateUser/:id', UserController.updateUser);
+router.put('/updateActiveMultipleUsers/', UserController.updateActiveMultipleUsers);
+router.delete('/deleteUser/:id', UserController.deleteUser);
+router.get('/getAllUsers', UserController.getAllUsers);
+router.get('/getUserDetails/:id', UserController.getUserDetails);
 
 // token routes
 router.post('/refreshToken', UserController.refreshToken);

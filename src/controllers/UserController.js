@@ -139,6 +139,29 @@ const updateUser = async (req, res) => {
     }
 }
 
+// check array of ids user exists in database before update
+const updateActiveMultipleUsers = async (req, res) => {
+    try {
+        const { userEmails, isActive } = req.body;
+
+        // Check if multiple user ids exists
+        if (!userEmails) {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'Multiple user IDs are required'
+            });
+        } 
+
+        const response = await UserService.updateActiveMultipleUsers(userEmails, isActive);
+        return res.status(200).json(response);
+
+    } catch (e) {
+        return res.status(404).json({
+            message: e
+        });
+    }
+}
+
 // check id user exists in database before delete
 const deleteUser = async (req, res) => {
     try {
@@ -223,6 +246,7 @@ module.exports = {
     signinUser, 
     signoutUser,
     updateUser, 
+    updateActiveMultipleUsers,
     deleteUser, 
     getAllUsers, 
     getUserDetails,

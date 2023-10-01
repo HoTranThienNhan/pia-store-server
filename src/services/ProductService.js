@@ -26,7 +26,7 @@ const createProduct = (newProduct) => {
                 price,
                 countInStock,
                 rating,
-                description, 
+                description,
                 active
             });
             if (createdProduct) {
@@ -93,6 +93,27 @@ const updateProduct = (productId, data) => {
                 status: 'OK',
                 message: 'UPDATE PRODUCT SUCCESS',
                 data: updatedProduct
+            })
+
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+const updateActiveMultipleProducts = (productIds, isActive) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            // if product exists, update new data for product by _id
+            const updatedMultipleProducts = await Product.updateMany(
+                { _id: productIds },
+                { $set: { active: isActive } }
+            );
+
+            resolve({
+                status: 'OK',
+                message: 'UPDATE ACTIVE FOR MULTIPLE PRODUCTS SUCCESS',
+                data: updatedMultipleProducts
             })
 
         } catch (e) {
@@ -199,6 +220,7 @@ module.exports = {
     createProduct,
     deleteProduct,
     updateProduct,
+    updateActiveMultipleProducts,
     getProductDetails,
     getAllProducts
 }
