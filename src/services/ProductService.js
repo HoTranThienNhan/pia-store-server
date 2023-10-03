@@ -5,12 +5,12 @@ const createProduct = (newProduct) => {
         const { id, name, image, type, price, countInStock, rating, description, active } = newProduct;
 
         try {
-            // Check if product exists by _id
-            const checkExistedProduct = await Product.findOne({
+            // Check if product exists by id
+            const getProductDataById = await Product.findOne({
                 id: id
             });
 
-            if (checkExistedProduct != null) {
+            if (getProductDataById != null) {
                 resolve({
                     status: 'ERR',
                     message: 'Product already exists'
@@ -45,26 +45,29 @@ const createProduct = (newProduct) => {
 const deleteProduct = (productId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            // Check if product exists by _id
-            const checkExistedProduct = await Product.findOne({
-                _id: productId
+            // get product data by productId (id)
+            const getProductDataById = await Product.findOne({
+                id: productId
             });
 
-            if (checkExistedProduct == null) {
+            // Check if product exists by id
+            if (getProductDataById == null) {
                 resolve({
                     status: 'ERR',
                     message: 'Product does not exist'
                 });
+            } else {
+                // get _id from product data
+                const product_Id = getProductDataById._id;
+
+                // if product exists then delete product by _id
+                await Product.findByIdAndDelete(product_Id);
+
+                resolve({
+                    status: 'OK',
+                    message: 'DELETE PRODUCT SUCCESS'
+                });
             }
-
-            // if product exists then delete product by _id
-            await Product.findByIdAndDelete(productId);
-
-            resolve({
-                status: 'OK',
-                message: 'DELETE PRODUCT SUCCESS'
-            });
-
         } catch (e) {
             reject(e);
         }
@@ -74,27 +77,30 @@ const deleteProduct = (productId) => {
 const updateProduct = (productId, data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            // Check if product exists by _id
-            const checkExistedProduct = await Product.findOne({
-                _id: productId
+            // get product data by productId (id)
+            const getProductDataById = await Product.findOne({
+                id: productId
             });
 
-            if (checkExistedProduct == null) {
+            // Check if product exists by id
+            if (getProductDataById == null) {
                 resolve({
                     status: 'ERR',
                     message: 'Product does not exist'
                 });
+            } else {
+                // get _id from product data
+                const product_Id = getProductDataById._id;
+
+                // if product exists, update new data for product by _id
+                const updatedProduct = await Product.findByIdAndUpdate(product_Id, data, { new: true });
+
+                resolve({
+                    status: 'OK',
+                    message: 'UPDATE PRODUCT SUCCESS',
+                    data: updatedProduct
+                })
             }
-
-            // if product exists, update new data for product by _id
-            const updatedProduct = await Product.findByIdAndUpdate(productId, data, { new: true });
-
-            resolve({
-                status: 'OK',
-                message: 'UPDATE PRODUCT SUCCESS',
-                data: updatedProduct
-            })
-
         } catch (e) {
             reject(e)
         }
@@ -104,9 +110,19 @@ const updateProduct = (productId, data) => {
 const updateActiveMultipleProducts = (productIds, isActive) => {
     return new Promise(async (resolve, reject) => {
         try {
+            // get product data by productId (id)
+            const getMultipleProductsDataById = await Product.find({
+                id: productIds
+            });
+
+            const multipleProducts_Ids = [];
+            getMultipleProductsDataById.map((eachProduct) => {
+                multipleProducts_Ids.push(eachProduct._id);
+            });
+            
             // if product exists, update new data for product by _id
             const updatedMultipleProducts = await Product.updateMany(
-                { _id: productIds },
+                { _id: multipleProducts_Ids },
                 { $set: { active: isActive } }
             );
 
@@ -126,12 +142,12 @@ const getProductDetails = (productId) => {
     return new Promise(async (resolve, reject) => {
         try {
 
-            // check if product exists
-            const checkExistedProduct = await Product.findOne({
-                _id: productId
+            // check if product exists by productId (id)
+            const getProductDataById = await Product.findOne({
+                id: productId
             });
 
-            if (checkExistedProduct == null) {
+            if (getProductDataById == null) {
                 resolve({
                     status: 'ERR',
                     message: 'Product does not exist'
@@ -141,7 +157,7 @@ const getProductDetails = (productId) => {
             resolve({
                 status: 'OK',
                 message: 'GET PRODUCT SUCCESS',
-                data: checkExistedProduct
+                data: getProductDataById
             });
 
         } catch (e) {
@@ -149,6 +165,34 @@ const getProductDetails = (productId) => {
         }
     });
 }
+
+// const getProductDetailsByName = (productName) => {
+//     return new Promise(async (resolve, reject) => {
+//         try {
+
+//             // check if product exists
+//             const checkExistedProduct = await Product.findOne({
+//                 name: productName
+//             });
+
+//             if (checkExistedProduct == null) {
+//                 resolve({
+//                     status: 'ERR',
+//                     message: 'Product does not exist'
+//                 });
+//             }
+
+//             resolve({
+//                 status: 'OK',
+//                 message: 'GET PRODUCT SUCCESS',
+//                 data: checkExistedProduct
+//             });
+
+//         } catch (e) {
+//             reject(e);
+//         }
+//     });
+// }
 
 const getAllProducts = (limitProducts, page, sort, filter) => {
     return new Promise(async (resolve, reject) => {
@@ -222,5 +266,6 @@ module.exports = {
     updateProduct,
     updateActiveMultipleProducts,
     getProductDetails,
+    // getProductDetailsById,
     getAllProducts
 }
