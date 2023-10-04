@@ -119,7 +119,7 @@ const updateActiveMultipleProducts = (productIds, isActive) => {
             getMultipleProductsDataById.map((eachProduct) => {
                 multipleProducts_Ids.push(eachProduct._id);
             });
-            
+
             // if product exists, update new data for product by _id
             const updatedMultipleProducts = await Product.updateMany(
                 { _id: multipleProducts_Ids },
@@ -147,7 +147,7 @@ const getProductDetails = (productId) => {
                 id: productId
             });
 
-            if (getProductDataById == null) {
+            if (getProductDataById == null || getProductDataById.active == false) {
                 resolve({
                     status: 'ERR',
                     message: 'Product does not exist'
@@ -166,48 +166,33 @@ const getProductDetails = (productId) => {
     });
 }
 
-// const getProductDetailsByName = (productName) => {
-//     return new Promise(async (resolve, reject) => {
-//         try {
-
-//             // check if product exists
-//             const checkExistedProduct = await Product.findOne({
-//                 name: productName
-//             });
-
-//             if (checkExistedProduct == null) {
-//                 resolve({
-//                     status: 'ERR',
-//                     message: 'Product does not exist'
-//                 });
-//             }
-
-//             resolve({
-//                 status: 'OK',
-//                 message: 'GET PRODUCT SUCCESS',
-//                 data: checkExistedProduct
-//             });
-
-//         } catch (e) {
-//             reject(e);
-//         }
-//     });
-// }
-
-const getAllProducts = (limitProducts, page, sort, filter) => {
+const getAllProducts = (limitProducts, page, sort, filter, onlyActive) => {
     return new Promise(async (resolve, reject) => {
         try {
+            // activeValue = [true, false] means both true and false
+            var activeValue = [true, false];
+            var totalProduct = await Product.count();
 
-            const totalProduct = await Product.count();
+            // activeValue = [true] means only true
+            if (onlyActive === 'true') {
+                activeValue = [true];
+                totalProduct = await Product.find({active: activeValue}).count();
+            }
 
             // if filter products by key and value
             if (filter) {
                 const key = filter[0];
                 const value = filter[1];
 
+                // activeValue = [true] means only true
+                if (onlyActive === 'true') {
+                    activeValue = [true];
+                }
+
                 // find products by key and value, $regex means filter with relative value
                 const allFilteredProducts = await Product.find({
-                    [key]: { '$regex': value }
+                    [key]: { '$regex': value },
+                    active: activeValue,
                 }).limit(limitProducts).skip(page * limitProducts);
 
                 resolve({
@@ -228,7 +213,14 @@ const getAllProducts = (limitProducts, page, sort, filter) => {
                 const objectSort = {};
                 objectSort[key] = value;
 
-                const allSortedProducts = await Product.find().limit(limitProducts).skip(page * limitProducts).sort(objectSort);
+                // activeValue = [true] means only true
+                if (onlyActive === 'true') {
+                    activeValue = [true];
+                }
+
+                const allSortedProducts = await Product.find({
+                    active: activeValue,
+                }).limit(limitProducts).skip(page * limitProducts).sort(objectSort);
 
                 resolve({
                     status: 'OK',
@@ -240,10 +232,17 @@ const getAllProducts = (limitProducts, page, sort, filter) => {
                 });
             }
 
+            // activeValue = [true] means only true
+            if (onlyActive === 'true') {
+                activeValue = [true];
+            }
+
             // get all products, with page n showing limit m products
             // limit(n) => show n products
             // skip(n) => skip first n products and show remaining products
-            const allProducts = await Product.find().limit(limitProducts).skip(page * limitProducts);
+            const allProducts = await Product.find({
+                active: activeValue,
+            }).limit(limitProducts).skip(page * limitProducts);
 
             resolve({
                 status: 'OK',
@@ -266,6 +265,5 @@ module.exports = {
     updateProduct,
     updateActiveMultipleProducts,
     getProductDetails,
-    // getProductDetailsById,
     getAllProducts
 }
