@@ -4,6 +4,7 @@ const createProduct = (newProduct) => {
     return new Promise(async (resolve, reject) => {
         const { id, name, image, type, price, countInStock, rating, description, active } = newProduct;
 
+
         try {
             // Check if product exists by id
             const getProductDataById = await Product.findOne({
@@ -138,7 +139,7 @@ const updateActiveMultipleProducts = (productIds, isActive) => {
     })
 }
 
-const getProductDetails = (productId) => {
+const getActiveProductDetails = (productId) => {
     return new Promise(async (resolve, reject) => {
         try {
 
@@ -148,6 +149,34 @@ const getProductDetails = (productId) => {
             });
 
             if (getProductDataById == null || getProductDataById.active == false) {
+                resolve({
+                    status: 'ERR',
+                    message: 'Product does not exist'
+                });
+            }
+
+            resolve({
+                status: 'OK',
+                message: 'GET PRODUCT SUCCESS',
+                data: getProductDataById
+            });
+
+        } catch (e) {
+            reject(e);
+        }
+    });
+}
+
+const getProductDetails = (productId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+
+            // check if product exists by productId (id)
+            const getProductDataById = await Product.findOne({
+                id: productId
+            });
+
+            if (getProductDataById == null) {
                 resolve({
                     status: 'ERR',
                     message: 'Product does not exist'
@@ -192,7 +221,7 @@ const getAllProducts = (limitProducts, page, sort, filter, onlyActive) => {
                 // find products by key and value, $regex means filter with relative value
                 const allFilteredProducts = await Product.find({
                     [key]: { '$regex': value },
-                    active: activeValue,
+                    "active": activeValue,
                 }).limit(limitProducts).skip(page * limitProducts);
 
                 resolve({
@@ -219,7 +248,7 @@ const getAllProducts = (limitProducts, page, sort, filter, onlyActive) => {
                 }
 
                 const allSortedProducts = await Product.find({
-                    active: activeValue,
+                    "active": activeValue,
                 }).limit(limitProducts).skip(page * limitProducts).sort(objectSort);
 
                 resolve({
@@ -244,6 +273,12 @@ const getAllProducts = (limitProducts, page, sort, filter, onlyActive) => {
                 active: activeValue,
             }).limit(limitProducts).skip(page * limitProducts);
 
+            const allProductsN = await Product.find({
+                "active": activeValue,
+            });
+            // console.log(activeValue)
+            // console.log(allProductsN)
+
             resolve({
                 status: 'OK',
                 message: 'GET ALL PRODUCTS SUCCESS',
@@ -259,11 +294,28 @@ const getAllProducts = (limitProducts, page, sort, filter, onlyActive) => {
     });
 }
 
+const getAllProductTypes = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const allProductTypes = await Product.distinct('type');
+            resolve({
+                status: 'OK',
+                message: 'GET ALL PRODUCT TYPES SUCCESS',
+                data: allProductTypes
+            });
+        } catch (e) {
+            reject(e);
+        }
+    });
+}
+
 module.exports = {
     createProduct,
     deleteProduct,
     updateProduct,
     updateActiveMultipleProducts,
+    getActiveProductDetails,
     getProductDetails,
-    getAllProducts
+    getAllProducts,
+    getAllProductTypes,
 }

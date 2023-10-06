@@ -2,7 +2,7 @@ const ProductService = require('../services/ProductService');
 
 const createProduct = async (req, res) => {
     try {
-        var { id, name, image, type, price, countInStock, rating, description, active } = req.body;
+        var { id, name, image, type, price, countInStock, rating, description, active = true } = req.body;
 
         // Check required fields
         if (!id || !name || !image || !type || !price || !countInStock || !description) {
@@ -11,6 +11,7 @@ const createProduct = async (req, res) => {
                 message: 'The input is required'
             });
         } 
+
 
         const response = await ProductService.createProduct(req.body);
         
@@ -89,6 +90,27 @@ const updateActiveMultipleProducts = async (req, res) => {
     }
 }
 
+const getActiveProductDetails = async (req, res) => {
+    try {
+
+        const productId = req.params.id;
+
+        if (!productId) {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'Product ID is required'
+            });
+        }
+
+        const response = await ProductService.getActiveProductDetails(productId);
+        return res.status(200).json(response);
+    } catch (e) {
+        return res.status(404).json({
+            message: e
+        });
+    }
+}
+
 const getProductDetails = async (req, res) => {
     try {
 
@@ -124,11 +146,24 @@ const getAllProducts = async (req, res) => {
     }
 }
 
+const getAllProductTypes = async (req, res) => {
+    try {
+        const response = await ProductService.getAllProductTypes();
+        return res.status(200).json(response);
+    } catch (e) {
+        return res.status(404).json({
+            message: e
+        });
+    }
+}
+
 module.exports = { 
     createProduct, 
     deleteProduct, 
     updateProduct, 
     updateActiveMultipleProducts,
+    getActiveProductDetails,
     getProductDetails, 
-    getAllProducts 
+    getAllProducts,
+    getAllProductTypes,
 }
