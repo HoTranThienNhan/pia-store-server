@@ -16,17 +16,15 @@ const orderSchema = new mongoose.Schema(
             },
         ],
 
-        shippingAddress: {
-            fullName: { type: String, required: true },
+        deliveryInformation: {
+            fullname: { type: String, required: true },
             address: { type: String, required: true },
-            city: { type: String, required: true },
             phone: { type: Number, required: true }
         },
 
         paymentMethod: { type: String, required: true },
-        itemPrice: { type: Number, required: true },
+        subtotalPrice: { type: Number, required: true },
         shippingPrice: { type: Number, required: true },
-        taxPrice: { type: Number, required: true },
         totalPrice: { type: Number, required: true },
         user: { 
             type: mongoose.Schema.Types.ObjectId, 
