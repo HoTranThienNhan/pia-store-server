@@ -46,7 +46,8 @@ const authUserMiddleware = (req, res, next) => {
         const token = req.headers.token.split(' ')[1];
 
         // id of user
-        const userId = req.params.id;
+        const userIdByParams = req.params.id;
+        const userIdByBody = req.body.user;
 
         jwt.verify(token, process.env.ACCESS_TOKEN, function (err, user) {
             if (err) {
@@ -57,10 +58,10 @@ const authUserMiddleware = (req, res, next) => {
             }
 
             // if user is not admin, notify error
-            if (user?.isAdmin == false && user?.id != userId) {
+            if (user?.isAdmin == false && user?.id != userIdByParams && user?.id != userIdByBody) {
                 return res.status(404).json({
                     status: 'ERR',
-                    message: 'Authentication failed'
+                    message: 'Authentication failed!'
                 })
             }
 

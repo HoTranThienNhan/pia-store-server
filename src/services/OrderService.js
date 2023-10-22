@@ -4,6 +4,7 @@ const Product = require('../models/ProductModel');
 const createOrder = (newOrder) => {
     return new Promise(async (resolve, reject) => {
         const { orderItems, fullname, address, phone, paymentMethod, shippingPrice, subtotalPrice, totalPrice, user } = newOrder;
+        const status = 'Chờ xác nhận';
         try {
             let addedIntoDatabase = 0;
             const promisesProduct = orderItems.map(async (item) => {
@@ -36,6 +37,7 @@ const createOrder = (newOrder) => {
                         shippingPrice,
                         subtotalPrice,
                         totalPrice,
+                        status: status,
                         user: user,
                     });
                     if (createdOrder) {
@@ -99,7 +101,75 @@ const getAllOrders = (userId) => {
     });
 }
 
+const cancelOrder = (orderId, orderItems) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            orderItems.map(async (item) => {
+                await Product.findOneAndUpdate(
+                    {
+                        _id: item.product,
+                    },
+                    {
+                        $inc: {
+                            countInStock: +item.amount,
+                            sold: -item.amount,
+                        }
+                    },
+                    { new: true }
+                );
+                const order = await Order.findByIdAndUpdate(
+                    orderId,
+                    { status: 'Đã hủy' },
+                    { new: true }
+                );
+                if (order === null) {
+                    resolve({
+                        status: 'ERR',
+                        message: `THE ORDER IS NOT DEFINED`,
+                    });
+                }
+                resolve({
+                    status: 'OK',
+                    message: `DELETE ORDER SUCCESSFULLY`,
+                    data: order
+                });
+            });
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+
+const updateOrderState = (orderId, orderItems, status) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            orderItems.map(async (item) => {
+                const order = await Order.findByIdAndUpdate(
+                    orderId,
+                    { status: status },
+                    { new: true }
+                );
+                if (order === null) {
+                    resolve({
+                        status: 'ERR',
+                        message: `THE ORDER IS NOT DEFINED`,
+                    });
+                }
+                resolve({
+                    status: 'OK',
+                    message: `UPDATE ORDER STATUS SUCCESSFULLY`,
+                    data: order
+                });
+            });
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+
 module.exports = {
     createOrder,
     getAllOrders,
+    cancelOrder,
+    updateOrderState
 }

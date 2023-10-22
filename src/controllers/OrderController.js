@@ -44,7 +44,63 @@ const getAllOrders = async (req, res) => {
     }
 }
 
+const cancelOrder = async (req, res) => {
+    try {
+        const orderId = req.params.id;
+        const orderItems = req.body.orderItems;
+        const status = req.body.status;
+
+        if (!orderId) {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'The order ID is required'
+            });
+        }
+        if (status !== 'Chờ xác nhận') {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'The order cannot be canceled'
+            });
+        }
+
+        const response = await OrderService.cancelOrder(orderId, orderItems);
+        
+        return res.status(200).json(response);
+
+    } catch (e) {
+        return res.status(404).json({
+            message: e
+        });
+    }
+}
+
+const updateOrderState = async (req, res) => {
+    try {
+        const orderId = req.params.id;
+        const orderItems = req.body.orderItems;
+        const status = req.body.status;
+
+        if (!orderId) {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'The order ID is required'
+            });
+        }
+
+        const response = await OrderService.updateOrderState(orderId, orderItems, status);
+        
+        return res.status(200).json(response);
+
+    } catch (e) {
+        return res.status(404).json({
+            message: e
+        });
+    }
+}
+
 module.exports = { 
     createOrder,
     getAllOrders,
+    cancelOrder,
+    updateOrderState,
 }
