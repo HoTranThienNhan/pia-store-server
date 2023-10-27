@@ -4,7 +4,7 @@ const Product = require('../models/ProductModel');
 const createOrder = (newOrder) => {
     return new Promise(async (resolve, reject) => {
         const { orderItems, fullname, address, phone, paymentMethod, shippingPrice, subtotalPrice, totalPrice, user } = newOrder;
-        const status = 'Chờ xác nhận';
+        const status = 'pending';
         try {
             let addedIntoDatabase = 0;
             const promisesProduct = orderItems.map(async (item) => {
@@ -101,6 +101,22 @@ const getAllOrders = (userId) => {
     });
 }
 
+const getAllOrdersByAdmin = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const getAllOrders = await Order.find();
+            resolve({
+                status: 'OK',
+                message: 'GET ALL ORDERS SUCCESS',
+                data: getAllOrders
+            });
+
+        } catch (e) {
+            reject(e);
+        }
+    });
+}
+
 const cancelOrder = (orderId, orderItems) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -119,7 +135,7 @@ const cancelOrder = (orderId, orderItems) => {
                 );
                 const order = await Order.findByIdAndUpdate(
                     orderId,
-                    { status: 'Đã hủy' },
+                    { status: 'canceled' },
                     { new: true }
                 );
                 if (order === null) {
@@ -167,9 +183,69 @@ const updateOrderState = (orderId, orderItems, status) => {
     })
 }
 
+const getOrderByStatus = (userId, status) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+
+            // check if order exists (found by user field in order)
+            const getOrderDataByUserIdAndStatus = await Order.find({
+                user: userId,
+                status: status,
+            });
+
+            if (getOrderDataByUserIdAndStatus.length === 0) {
+                resolve({
+                    status: 'ERR',
+                    message: 'Order does not exist'
+                });
+            }
+
+
+            resolve({
+                status: 'OK',
+                message: 'GET ORDER SUCCESS',
+                data: getOrderDataByUserIdAndStatus
+            });
+
+        } catch (e) {
+            reject(e);
+        }
+    });
+}
+
+const getOrderDetails = (orderId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+
+            const getOrderDetails = await Order.findOne({
+                _id: orderId
+            });
+
+            if (getOrderDetails.length === 0) {
+                resolve({
+                    status: 'ERR',
+                    message: 'Order does not exist'
+                });
+            }
+
+            resolve({
+                status: 'OK',
+                message: 'GET ORDER DETAILS SUCCESS',
+                data: getOrderDetails
+            });
+
+        } catch (e) {
+            reject(e);
+        }
+    });
+}
+
 module.exports = {
     createOrder,
     getAllOrders,
     cancelOrder,
-    updateOrderState
+    updateOrderState,
+    getOrderByStatus,
+    getAllOrdersByAdmin,
+    getOrderDetails,
 }
