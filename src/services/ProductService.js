@@ -276,8 +276,6 @@ const getAllProducts = (limitProducts, page, sort, filter, onlyActive) => {
             const allProductsN = await Product.find({
                 "active": activeValue,
             });
-            // console.log(activeValue)
-            // console.log(allProductsN)
 
             resolve({
                 status: 'OK',

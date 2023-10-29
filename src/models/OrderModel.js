@@ -13,6 +13,8 @@ const orderSchema = new mongoose.Schema(
                     ref: 'Product',
                     required: true
                 },
+                productId: { type: String, required: true },
+                isReviewed: { type: Boolean, default: false },
             },
         ],
 
