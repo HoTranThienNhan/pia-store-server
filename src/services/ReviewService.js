@@ -7,7 +7,6 @@ const createReview = (newReview) => {
 
         try {
             // update order isReviewed 
-            console.log(userId, "-", productId, '-', orderId);
             const orderData = await Order.findOneAndUpdate(
                 {
                     _id: orderId,
