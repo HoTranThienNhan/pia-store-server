@@ -1,5 +1,7 @@
 const Review = require('../models/ReviewModel');
 const Order = require('../models/OrderModel');
+const User = require('../models/UserModel');
+const mongoose = require('mongoose');
 
 const createReview = (newReview) => {
     return new Promise(async (resolve, reject) => {
@@ -53,7 +55,7 @@ const getReview = (orderId, productId, userId) => {
         const user = userId;
 
         try {
-            // create new review
+            // find review
             const reviewedProduct = await Review.findOne({
                 orderId: order,
                 userId: user,
@@ -76,7 +78,56 @@ const getReview = (orderId, productId, userId) => {
     })
 }
 
+const getReviewByProduct = (productId) => {
+    return new Promise(async (resolve, reject) => {
+
+        const product = productId;
+
+        try {
+            // find review
+            const reviewedProduct = await Review.find({
+                productId: product,
+            });
+            if (reviewedProduct) {
+                reviewedProduct.map(async (productItem) => {
+                    const productDetails = await User.findOne({
+                        _id: productItem?.userId
+                    });
+                    const reviewedProductWithUser = await Review.aggregate([
+                        {
+                            "$match": {
+                                "productId": new mongoose.Types.ObjectId(product),
+                            },
+                        },
+                        {
+                            "$lookup": {
+                                "from": "users",
+                                "localField": "userId",
+                                "foreignField": "_id",
+                                "as": "userDetails"
+                            },
+                        }
+                    ]);
+                    resolve({
+                        status: 'OK',
+                        message: 'GET REVIEW SUCCESSFULLY',
+                        data: reviewedProductWithUser
+                    });
+                });
+            } else {
+                resolve({
+                    status: 'ERR',
+                    message: 'PRODUCT HAS NOT BEEN REVIEWED',
+                });
+            }
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+
 module.exports = {
     createReview,
     getReview,
+    getReviewByProduct,
 }

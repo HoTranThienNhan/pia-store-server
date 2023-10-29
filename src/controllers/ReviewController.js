@@ -90,7 +90,31 @@ const getReview = async (req, res) => {
     }
 }
 
+const getReviewByProduct = async (req, res) => {
+    try {
+        const productId = req.params.id;
+
+        // Check required fields
+        if (!productId) {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'Product Id is required'
+            });
+        } 
+
+        const response = await ReviewService.getReviewByProduct(productId);
+        
+        return res.status(200).json(response);
+
+    } catch (e) {
+        return res.status(404).json({
+            message: e
+        });
+    }
+}
+
 module.exports = { 
     createReview, 
     getReview,
+    getReviewByProduct,
 }
