@@ -1,9 +1,10 @@
 const Order = require('../models/OrderModel');
 const Product = require('../models/ProductModel');
+const EmailService = require('../services/EmailService');
 
 const createOrder = (newOrder) => {
     return new Promise(async (resolve, reject) => {
-        const { orderItems, fullname, address, phone, paymentMethod, shippingPrice, subtotalPrice, totalPrice, user } = newOrder;
+        const { orderItems, fullname, address, phone, paymentMethod, shippingPrice, subtotalPrice, totalPrice, user, email } = newOrder;
         const status = 'pending';
         try {
             let addedIntoDatabase = 0;
@@ -32,6 +33,7 @@ const createOrder = (newOrder) => {
                             fullname,
                             address,
                             phone,
+                            email
                         },
                         paymentMethod,
                         shippingPrice,
@@ -62,6 +64,7 @@ const createOrder = (newOrder) => {
                     message: `PRODUCT WITH ID ${newData.join(',')} IS INSUFFICIENT`,
                 });
             } else {
+                await EmailService.sendEmailCreateOrder(email, orderItems, shippingPrice, subtotalPrice, totalPrice, paymentMethod, fullname, address, phone);
                 resolve({
                     status: 'OK',
                     message: 'CREATE NEW ORDER SUCCESSFUL'

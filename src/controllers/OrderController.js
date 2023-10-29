@@ -2,10 +2,10 @@ const OrderService = require('../services/OrderService');
 
 const createOrder = async (req, res) => {
     try {
-        var { orderItems, fullname, address, phone, paymentMethod, shippingPrice, subtotalPrice, totalPrice, user } = req.body;
+        var { orderItems, fullname, address, phone, email, paymentMethod, shippingPrice, subtotalPrice, totalPrice, user } = req.body;
 
         // Check required fields
-        if (!orderItems, !fullname || !address || !phone, !paymentMethod || !shippingPrice || !subtotalPrice || !totalPrice || !user) {
+        if (!orderItems, !fullname || !address || !phone || !email || !paymentMethod || !shippingPrice || !subtotalPrice || !totalPrice || !user) {
             return res.status(200).json({
                 status: 'ERR',
                 message: 'The order information is required'
