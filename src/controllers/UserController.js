@@ -16,7 +16,7 @@ const createUser = async (req, res) => {
         const isValidPhone = phoneReg.test(phone);
 
         // Check required fields
-        if (!fullname || !email || !password || !confirmPassword || !phone) {
+        if (!fullname || !email || !password || !confirmPassword || !phone || !address) {
             return res.status(200).json({
                 status: 'ERR',
                 message: 'The input is required'
