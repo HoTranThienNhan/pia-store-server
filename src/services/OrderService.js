@@ -83,7 +83,7 @@ const getAllOrders = (userId) => {
             // check if order exists (found by user field in order)
             const getOrderDataByUserId = await Order.find({
                 user: userId
-            });
+            }).sort({createdAt: 'desc'});
 
             if (getOrderDataByUserId == null) {
                 resolve({
@@ -107,11 +107,31 @@ const getAllOrders = (userId) => {
 const getAllOrdersByAdmin = () => {
     return new Promise(async (resolve, reject) => {
         try {
-            const getAllOrders = await Order.find();
+            const getAllOrders = await Order.find().sort({createdAt: 'desc'});
             resolve({
                 status: 'OK',
                 message: 'GET ALL ORDERS SUCCESS',
                 data: getAllOrders
+            });
+
+        } catch (e) {
+            reject(e);
+        }
+    });
+}
+
+const getNotCanceledOrdersByAdmin = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const getAllNotCanceledOrders = await Order.find({
+                status: {
+                    $nin: ["pending", "pickingup", "canceled"]
+                }
+            }).sort({createdAt: 'desc'});
+            resolve({
+                status: 'OK',
+                message: 'GET ALL NOT CANCELED ORDERS SUCCESS',
+                data: getAllNotCanceledOrders
             });
 
         } catch (e) {
@@ -194,7 +214,7 @@ const getOrderByStatus = (userId, status) => {
             const getOrderDataByUserIdAndStatus = await Order.find({
                 user: userId,
                 status: status,
-            });
+            }).sort({createdAt: 'desc'});
 
             if (getOrderDataByUserIdAndStatus.length === 0) {
                 resolve({
@@ -251,4 +271,5 @@ module.exports = {
     getOrderByStatus,
     getAllOrdersByAdmin,
     getOrderDetails,
+    getNotCanceledOrdersByAdmin,
 }

@@ -37,9 +37,9 @@ const sendEmailCreateOrder = async (email, orderItems, shippingPrice, subtotalPr
         html: `
         <div> 
             <div>Xin chào ${fullname},</div> 
-            <div>Đơn hàng của bạn đã được đặt thành công tại <b>BRAND NAME</b>.</div> 
+            <div>Đơn hàng của bạn đã được đặt thành công tại <b>PIASTORE</b>.</div> 
             <div style="padding-bottom: 20px; border-bottom: 1px solid #bebebe;">Bạn vui lòng chờ từ 2-3 ngày để đơn hàng được vận chuyển và giao đến tận tay.
-                <b>BRAND NAME</b> chân thành cảm ơn bạn đã tin tưởng và ủng hộ.
+                <b>PIASTORE</b> chân thành cảm ơn bạn đã tin tưởng và ủng hộ.
             </div> 
             <div style="display: flex; justify-content: space-between; padding-top: 10px;">
                 <div style="width: 400px;">

@@ -9,6 +9,7 @@ router.delete('/cancelOrder/:id', OrderController.cancelOrder);
 router.put('/updateOrderState/:id&:status', OrderController.updateOrderState);
 router.get('/getOrderByStatus/:id&:status', authUserMiddleware, OrderController.getOrderByStatus);
 router.get('/getAllOrdersByAdmin', OrderController.getAllOrdersByAdmin);
+router.get('/getNotCanceledOrdersByAdmin', OrderController.getNotCanceledOrdersByAdmin);
 router.get('/getOrderDetails/:id', OrderController.getOrderDetails);
 
 module.exports = router;
