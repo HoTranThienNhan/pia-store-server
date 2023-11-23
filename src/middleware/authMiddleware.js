@@ -21,7 +21,7 @@ const authAdminMiddleware = (req, res, next) => {
             if (user?.isAdmin == false) {
                 return res.status(404).json({
                     status: 'ERR',
-                    message: 'Authentication failed'
+                    message: 'Authentication failed due to not an admin'
                 })
             }
 
@@ -31,6 +31,7 @@ const authAdminMiddleware = (req, res, next) => {
         });
 
     } else {
+        console.log(req.headers);
         return res.status(404).json({
             status: 'ERR',
             message: 'Authentication failed'

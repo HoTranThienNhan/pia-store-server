@@ -2,24 +2,12 @@ const Product = require('../models/ProductModel');
 
 const createProduct = (newProduct) => {
     return new Promise(async (resolve, reject) => {
-        const { id, name, image, type, price, countInStock, rating, description, sold, active } = newProduct;
+        const { name, image, type, price, countInStock, rating, description, sold, active } = newProduct;
 
         try {
-            // Check if product exists by id
-            const getProductDataById = await Product.findOne({
-                id: id
-            });
-
-            if (getProductDataById != null) {
-                resolve({
-                    status: 'ERR',
-                    message: 'Product already exists'
-                });
-            }
 
             // create new user
             const createdProduct = await Product.create({
-                id,
                 name,
                 image,
                 type,
@@ -28,7 +16,7 @@ const createProduct = (newProduct) => {
                 rating,
                 description,
                 sold,
-                active
+                active: true,
             });
             if (createdProduct) {
                 resolve({
@@ -46,12 +34,12 @@ const createProduct = (newProduct) => {
 const deleteProduct = (productId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            // get product data by productId (id)
+            // get product data by productId 
             const getProductDataById = await Product.findOne({
-                id: productId
+                _id: productId
             });
 
-            // Check if product exists by id
+            // Check if product exists by _id
             if (getProductDataById == null) {
                 resolve({
                     status: 'ERR',
@@ -78,12 +66,12 @@ const deleteProduct = (productId) => {
 const updateProduct = (productId, data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            // get product data by productId (id)
+            // get product data by productId 
             const getProductDataById = await Product.findOne({
-                id: productId
+                _id: productId
             });
 
-            // Check if product exists by id
+            // Check if product exists by _id
             if (getProductDataById == null) {
                 resolve({
                     status: 'ERR',
@@ -111,9 +99,9 @@ const updateProduct = (productId, data) => {
 const updateActiveMultipleProducts = (productIds, isActive) => {
     return new Promise(async (resolve, reject) => {
         try {
-            // get product data by productId (id)
+            // get product data by productId
             const getMultipleProductsDataById = await Product.find({
-                id: productIds
+                _id: productIds
             });
 
             const multipleProducts_Ids = [];
@@ -143,9 +131,9 @@ const getActiveProductDetails = (productId) => {
     return new Promise(async (resolve, reject) => {
         try {
 
-            // check if product exists by productId (id)
+            // check if product exists by productId 
             const getProductDataById = await Product.findOne({
-                id: productId
+                _id: productId
             });
 
             if (getProductDataById == null || getProductDataById.active == false) {
@@ -171,9 +159,9 @@ const getProductDetails = (productId) => {
     return new Promise(async (resolve, reject) => {
         try {
 
-            // check if product exists by productId (id)
+            // check if product exists by productId 
             const getProductDataById = await Product.findOne({
-                id: productId
+                _id: productId
             });
 
             if (getProductDataById == null) {

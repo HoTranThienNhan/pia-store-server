@@ -6,7 +6,7 @@ const generalAccessToken = async (payload) => {
     const accessToken = jwt.sign(
         { ...payload }, // ...payload to expand all elements of payload, instead of being contained in payload
         process.env.ACCESS_TOKEN,
-        { expiresIn: '30d' }
+        { expiresIn: '365d' }
     )
     return accessToken
 }
