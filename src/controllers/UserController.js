@@ -101,6 +101,46 @@ const signinUser = async (req, res) => {
     }
 }
 
+// check valid fields before sign in
+const signinAdminUser = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const emailReg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+        const isValidEmail = emailReg.test(email);
+
+        // Check required fields
+        if (!email || !password) {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'The input is required'
+            });
+        } 
+        // Check valid email
+        else if (!isValidEmail) {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'Incorrect email'
+            });
+        } 
+
+        // newResponse contains only access token
+        const response = await UserService.signinAdminUser(req.body);
+        const { refreshToken, ...newResponse } = response;
+        // set cookie name as refreshToken to refreshToken value
+        res.cookie('refreshToken', refreshToken, {
+            HttpOnly: true, // cookie is only used by HTTP request (server), prevent accessing from non-HTTP like JavaScript (browser)
+            Secure: false,
+            samesite: 'strict'
+        });
+
+        return res.status(200).json(newResponse);
+    } catch (e) {
+        return res.status(404).json({
+            message: e
+        });
+    }
+}
+
 // clear cookie for refresh token
 const signoutUser = async (req, res) => {
     try {
@@ -244,6 +284,7 @@ const refreshToken = async (req, res) => {
 module.exports = { 
     createUser, 
     signinUser, 
+    signinAdminUser,
     signoutUser,
     updateUser, 
     updateActiveMultipleUsers,

@@ -40,7 +40,7 @@ const createOrder = (newOrder) => {
                         subtotalPrice,
                         totalPrice,
                         status: status,
-                        user: user,
+                        userId: user,
                     });
                     if (createdOrder) {
                         return {
@@ -82,7 +82,7 @@ const getAllOrders = (userId) => {
 
             // check if order exists (found by user field in order)
             const getOrderDataByUserId = await Order.find({
-                user: userId
+                userId: userId
             }).sort({createdAt: 'desc'});
 
             if (getOrderDataByUserId == null) {
@@ -212,7 +212,7 @@ const getOrderByStatus = (userId, status) => {
 
             // check if order exists (found by user field in order)
             const getOrderDataByUserIdAndStatus = await Order.find({
-                user: userId,
+                userId: userId,
                 status: status,
             }).sort({createdAt: 'desc'});
 

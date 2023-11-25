@@ -13,7 +13,6 @@ const orderSchema = new mongoose.Schema(
                     ref: 'Product',
                     required: true
                 },
-                productId: { type: String, required: true },
                 isReviewed: { type: Boolean, default: false },
             },
         ],
@@ -29,15 +28,11 @@ const orderSchema = new mongoose.Schema(
         subtotalPrice: { type: Number, required: true },
         shippingPrice: { type: Number, required: true },
         totalPrice: { type: Number, required: true },
-        user: { 
+        userId: { 
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'User', 
             required: true 
         },
-        isPaid: { type: Boolean, default: false },
-        paidAt: { type: Date },
-        isDelivered: { type: Boolean, default: false },
-        deliveredAt: { type: Date },
         status: { type: String },
     },
     {

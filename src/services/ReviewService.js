@@ -12,10 +12,10 @@ const createReview = (newReview) => {
             const orderData = await Order.findOneAndUpdate(
                 {
                     _id: orderId,
-                    user: userId,
+                    userId: userId,
                     orderItems: {
                         $elemMatch: {
-                            product: productId,
+                            product: new mongoose.Types.ObjectId(productId),
                         }
                     },
                 },

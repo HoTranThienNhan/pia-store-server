@@ -106,6 +106,73 @@ const signinUser = (userSignin) => {
     });
 }
 
+const signinAdminUser = (userSignin) => {
+    return new Promise(async (resolve, reject) => {
+        const { email, password } = userSignin;
+
+        try {
+            // Check if user existed by email
+            const checkExistedUser = await User.findOne({
+                email: email
+            });
+
+            if (checkExistedUser == null) {
+                resolve({
+                    status: 'ERR',
+                    message: 'User does not exist'
+                });
+            }
+
+            // compare password and password in database
+            const comparePassword = bcrypt.compareSync(password, checkExistedUser.password);
+
+            if (!comparePassword) {
+                resolve({
+                    status: 'ERR',
+                    message: 'Username or password is incorrect'
+                });
+            }
+            
+            // check if account is active
+            if (checkExistedUser.active === false) {
+                resolve({
+                    status: 'ERR',
+                    message: 'User is inactive'
+                });
+            }
+
+            // check if account is admin
+            if (checkExistedUser.isAdmin === false) {
+                resolve({
+                    status: 'ERR',
+                    message: 'User does not have permissions'
+                });
+            }
+
+            // access and refresh token contains id and isAdmin fields
+            const accessToken = await generalAccessToken({
+                id: checkExistedUser.id,
+                isAdmin: checkExistedUser.isAdmin
+            });
+
+            const refreshToken = await generalRefreshToken({
+                id: checkExistedUser.id,
+                isAdmin: checkExistedUser.isAdmin
+            });
+
+            resolve({
+                status: 'OK',
+                message: 'SIGN IN SUCCESS',
+                accessToken,
+                refreshToken
+            });
+
+        } catch (e) {
+            reject(e);
+        }
+    });
+}
+
 const updateUser = (userId, data) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -243,6 +310,7 @@ const getUserDetails = (userId) => {
 module.exports = { 
     createUser, 
     signinUser, 
+    signinAdminUser,
     updateUser, 
     updateActiveMultipleUsers,
     deleteUser, 

@@ -7,6 +7,7 @@ const { authAdminMiddleware, authUserMiddleware } = require("../middleware/authM
 // user routes
 router.post('/signup', UserController.createUser);
 router.post('/signin', UserController.signinUser);
+router.post('/signinAdmin', UserController.signinAdminUser);
 router.post('/signout', UserController.signoutUser);
 router.put('/updateUser/:id', UserController.updateUser);
 router.put('/updateActiveMultipleUsers/', UserController.updateActiveMultipleUsers);
