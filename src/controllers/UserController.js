@@ -162,6 +162,34 @@ const updateUser = async (req, res) => {
         const userId = req.params.id;
         const data = req.body;
 
+        if (data.fullname === '') {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'Fullname is required'
+            });
+        }
+
+        if (data.email === '') {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'Email is required'
+            });
+        }
+
+        if (!data.phone) {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'Phone is required'
+            });
+        }
+
+        if (!data.address) {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'Address is required'
+            });
+        }
+
         if (!userId) {
             return res.status(200).json({
                 status: 'ERR',
