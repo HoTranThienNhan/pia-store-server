@@ -5,7 +5,7 @@ const routes = require('./routes');
 const cors = require('cors');
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-dotenv.config();
+dotenv.config({path: '../.env'});
 
 const app = express();
 const port = process.env.PORT || 3001; // different from port 3000 of frontend
